@@ -53,6 +53,10 @@ main {
 
 .page-header {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
 }
 
 .eyebrow {
@@ -121,6 +125,14 @@ main {
   color: #22c55e;
 }
 
+.batch-card__status.past-deadline {
+  color: #ef4444;
+}
+
+.batch-card__status.due-soon {
+  color: #f59e0b;
+}
+
 .back-link {
   color: #94a3b8;
   text-decoration: none;
@@ -151,11 +163,211 @@ main {
   color: #94a3b8;
 }
 
-.vote-button {
+.vote-button,
+.view-button {
   margin-top: 0.75rem;
   border: none;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #0f172a;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.view-button {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+.create-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.voting-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.vote-btn {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  border-radius: 0.75rem;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e2e8f0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vote-btn:hover:not(:disabled) {
+  border-color: rgba(56, 189, 248, 0.6);
+  transform: translateY(-2px);
+}
+
+.vote-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vote-yes.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-color: #22c55e;
+  color: #0f172a;
+}
+
+.vote-no.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.vote-abstain.active {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-color: #f59e0b;
+  color: #0f172a;
+}
+
+.infraction-detail {
+  max-width: 800px;
+}
+
+.infraction-detail dl {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.infraction-detail dt {
+  font-weight: 600;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.infraction-detail dd {
+  margin: 0.25rem 0 0 0;
+  color: #e2e8f0;
+}
+
+.voting-section {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 1rem;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.finalized-notice {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 0.5rem;
+  color: #22c55e;
+}
+
+.batch-form {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.batch-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #cbd5f5;
+}
+
+.batch-form input,
+.batch-form textarea,
+.batch-form select {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 0.5rem;
+  color: #e2e8f0;
+  font-family: inherit;
+}
+
+.batch-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-actions button[type='submit'] {
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #0f172a;
+}
+
+.form-actions button[type='button'] {
+  background: rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+}
+
+.login-page {
+  max-width: 400px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.login-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.login-page label {
+  display: block;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.login-page input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 0.5rem;
+  color: #e2e8f0;
+  font-family: inherit;
+}
+
+.login-page button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
   background: linear-gradient(135deg, #38bdf8, #818cf8);
   color: #0f172a;
   font-weight: 600;

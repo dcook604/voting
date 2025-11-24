@@ -6,21 +6,23 @@ export type Batch = {
   id: string;
   title: string;
   description: string;
-  deadline: string;
+  createdBy: string;
   votingMode: VotingMode;
-  totalInfractions: number;
-  remainingInfractions: number;
+  deadline: string | null;
   finalized: boolean;
+  createdAt: string;
 };
 
 export type Infraction = {
   id: string;
+  batchId: string;
   unit: string;
-  summary: string;
-  bylawReference: string;
-  recommendedAction: string;
   reportedDate: string;
-  attachments: Array<{ id: string; filename: string }>;
+  bylawReference: string;
+  summary: string;
+  recommendedAction: string;
+  status: 'open' | 'voted' | 'closed';
+  createdAt: string;
 };
 
 export type BatchDetail = Batch & {

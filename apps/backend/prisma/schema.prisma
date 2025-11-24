@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique @db.VarChar(254)
+  name      String?  @db.VarChar(200)
+  role      String   @default("council") @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  batchesCreated Batch[]
+  votes          Vote[]
+
+  @@map("users")
+}
+
+model Batch {
+  id          String       @id @default(uuid())
+  title       String       @db.VarChar(255)
+  description String?      @db.Text
+  createdBy   String       @map("created_by")
+  votingMode  String       @default("tracked") @map("voting_mode") @db.VarChar(20)
+  deadline    DateTime?
+  finalized   Boolean      @default(false)
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  creator     User         @relation(fields: [createdBy], references: [id])
+  infractions Infraction[]
+  invitations Invitation[]
+
+  @@map("batches")
+}
+
+model Infraction {
+  id                String        @id @default(uuid())
+  batchId           String        @map("batch_id")
+  unit              String        @db.VarChar(50)
+  reportedDate      DateTime      @map("reported_date") @db.Date
+  bylawReference    String        @map("bylaw_reference") @db.VarChar(200)
+  summary           String        @db.Text
+  recommendedAction String        @map("recommended_action") @db.Text
+  status            String        @default("open") @db.VarChar(20)
+  createdAt         DateTime      @default(now()) @map("created_at")
+
+  batch        Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  attachments  Attachment[]
+  votes        Vote[]
+
+  @@map("infractions")
+}
+
+model Attachment {
+  id           String    @id @default(uuid())
+  infractionId String    @map("infraction_id")
+  filename     String    @db.VarChar(255)
+  storagePath  String    @map("storage_path") @db.Text
+  mime         String?   @db.VarChar(100)
+  uploadedAt   DateTime  @default(now()) @map("uploaded_at")
+
+  infraction Infraction @relation(fields: [infractionId], references: [id], onDelete: Cascade)
+
+  @@map("attachments")
+}
+
+model Vote {
+  id          String    @id @default(uuid())
+  infractionId String   @map("infraction_id")
+  userId      String    @map("user_id")
+  voteValue   String    @map("vote_value") @db.VarChar(10)
+  previousHash String?  @map("previous_hash") @db.VarChar(255)
+  hash        String    @db.VarChar(255)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  infraction Infraction @relation(fields: [infractionId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id])
+
+  @@index([infractionId])
+  @@index([userId])
+  @@map("votes")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId   String?  @map("actor_id")
+  action     String   @db.VarChar(100)
+  objectType String   @map("object_type") @db.VarChar(50)
+  objectId   String   @map("object_id")
+  details    Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Invitation {
+  id         String    @id @default(uuid())
+  batchId    String?   @map("batch_id")
+  email      String    @db.VarChar(254)
+  inviteToken String   @map("invite_token") @db.VarChar(255)
+  sentAt     DateTime? @map("sent_at")
+  acceptedAt DateTime? @map("accepted_at")
+
+  batch Batch? @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
+}
