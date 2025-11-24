@@ -35,7 +35,7 @@ Magic-link, password+2FA, or SSO; enforce HTTPS, rate limiting, JWTs, RBAC, sign
 Options: Docker volume, MinIO, or external S3; require access control, optional virus scan, thumbnails/previews.
 
 ## Notifications & Email Flows
-Use Mailu SMTP; flows for invites, reminders, finalization summaries with relevant metadata.
+Use any SMTP provider defined via environment variables (e.g., Mailu, Postmark) for invites, reminders, and finalization summaries. No ListMonk dependency.
 
 ## Audit, Logging & Compliance
 Persist audit logs, immutable export snapshots, retention policy, admin-only mapping for anonymized mode.
@@ -47,9 +47,7 @@ CSV template fields listed; features include bulk attach upload, import preview,
 Services: backend (Node/Express), frontend (React SPA), MariaDB/Postgres, MinIO, Mail integration, reverse proxy. See `docker-compose.yml` for skeleton.
 
 ## Integrations
-- **EspoCRM**: push finalize events/reports via API.
-- **ListMonk**: optional templated emails.
-- **Mailu**: SMTP relay for transactional mail.
+- **SMTP provider**: configurable via env vars for transactional mail (invite/reminder/finalization). No EspoCRM integration planned.
 
 ## Testing & Acceptance Criteria
 - Handle ≥100 infractions per batch with correct tallies.

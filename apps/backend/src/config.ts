@@ -28,12 +28,10 @@ export const config = {
     host: process.env.SMTP_HOST ?? '',
     port: Number(process.env.SMTP_PORT) || 587,
     user: process.env.SMTP_USER ?? '',
-    password: process.env.SMTP_PASSWORD ?? ''
+    password: process.env.SMTP_PASSWORD ?? '',
+    from: process.env.SMTP_FROM ?? 'Strata Voting <noreply@example.com>'
   },
-  storage: {
-    endpoint: process.env.S3_ENDPOINT ?? '',
-    accessKey: process.env.S3_ACCESS_KEY ?? '',
-    secretKey: process.env.S3_SECRET_KEY ?? '',
-    bucket: process.env.S3_BUCKET ?? ''
+  app: {
+    baseUrl: process.env.APP_BASE_URL ?? 'http://localhost:5173'
   }
 };

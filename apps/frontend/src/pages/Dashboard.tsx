@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { BatchCard } from '../components/BatchCard';
 import { useBatches } from '../hooks/useBatches';
 import { useSession } from '../store/useSession';
@@ -18,11 +20,18 @@ export const Dashboard = () => {
           <h1>Voting dashboard</h1>
           <p className="lede">Track current infractions, deadlines, and voting progress.</p>
         </div>
+        {role === 'admin' && (
+          <Link to="/batches/new" className="create-button">
+            Create Batch
+          </Link>
+        )}
       </header>
       <div className="grid">
-        {data?.map((batch) => (
-          <BatchCard key={batch.id} batch={batch} />
-        ))}
+        {data && data.length > 0 ? (
+          data.map((batch) => <BatchCard key={batch.id} batch={batch} />)
+        ) : (
+          <p>No batches available.</p>
+        )}
       </div>
     </section>
   );

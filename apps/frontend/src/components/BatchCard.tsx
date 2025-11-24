@@ -7,14 +7,16 @@ type Props = {
 };
 
 export const BatchCard = ({ batch }: Props) => {
-  const dueSoon = new Date(batch.deadline).getTime() - Date.now() < 72 * 60 * 60 * 1000;
+  const deadline = batch.deadline ? new Date(batch.deadline) : null;
+  const dueSoon = deadline && deadline.getTime() - Date.now() < 72 * 60 * 60 * 1000;
+  const isPastDeadline = deadline && deadline < new Date();
 
   return (
     <article className="batch-card">
       <header>
         <p className="batch-card__mode">Mode: {batch.votingMode}</p>
-        <p className={`batch-card__status ${batch.finalized ? 'finalized' : ''}`}>
-          {batch.finalized ? 'Finalized' : dueSoon ? 'Due soon' : 'Open'}
+        <p className={`batch-card__status ${batch.finalized ? 'finalized' : isPastDeadline ? 'past-deadline' : dueSoon ? 'due-soon' : ''}`}>
+          {batch.finalized ? 'Finalized' : isPastDeadline ? 'Past deadline' : dueSoon ? 'Due soon' : 'Open'}
         </p>
       </header>
       <h3>{batch.title}</h3>
@@ -22,13 +24,11 @@ export const BatchCard = ({ batch }: Props) => {
       <dl className="batch-card__meta">
         <div>
           <dt>Deadline</dt>
-          <dd>{new Date(batch.deadline).toLocaleString()}</dd>
+          <dd>{deadline ? deadline.toLocaleString() : 'No deadline'}</dd>
         </div>
         <div>
-          <dt>Infractions</dt>
-          <dd>
-            {batch.totalInfractions - batch.remainingInfractions}/{batch.totalInfractions} voted
-          </dd>
+          <dt>Status</dt>
+          <dd>{batch.finalized ? 'Finalized' : 'Active'}</dd>
         </div>
       </dl>
       <Link to={`/batches/${batch.id}`} className="batch-card__link">

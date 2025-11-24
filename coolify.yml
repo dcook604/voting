@@ -1,0 +1,33 @@
+# Coolify deployment configuration
+# This file helps Coolify understand the project structure
+
+services:
+  - name: voting-backend
+    type: dockerfile
+    path: ./apps/backend
+    port: 4000
+    env:
+      - DATABASE_URL
+      - JWT_SECRET
+      - SMTP_HOST
+      - SMTP_PORT
+      - SMTP_USER
+      - SMTP_PASSWORD
+      - SMTP_FROM
+      - APP_BASE_URL
+    volumes:
+      - uploads:/app/uploads
+
+  - name: voting-frontend
+    type: dockerfile
+    path: ./apps/frontend
+    port: 80
+    env:
+      - VITE_API_BASE_URL
+
+  - name: voting-db
+    type: mariadb
+    database: voting
+    user: voting
+
+

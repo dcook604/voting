@@ -6,4 +6,8 @@ dist/
 .DS_Store
 coverage/
 tmp/
-
+uploads/
+apps/backend/uploads/
+apps/frontend/dist/
+apps/backend/.env
+apps/frontend/.env

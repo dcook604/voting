@@ -1,10 +1,12 @@
 import { Link, useParams } from 'react-router-dom';
 
 import { useBatchDetail } from '../hooks/useBatches';
+import { useSession } from '../store/useSession';
 
 export const BatchDetail = () => {
   const { id = '' } = useParams();
   const { data, isLoading } = useBatchDetail(id);
+  const { role } = useSession();
 
   if (isLoading) {
     return <p>Loading batch…</p>;
@@ -19,6 +21,10 @@ export const BatchDetail = () => {
     );
   }
 
+  const deadline = data.deadline ? new Date(data.deadline) : null;
+  const isPastDeadline = deadline && deadline < new Date();
+  const canVote = !data.finalized && !isPastDeadline;
+
   return (
     <section>
       <Link to="/" className="back-link">
@@ -28,7 +34,10 @@ export const BatchDetail = () => {
         <div>
           <p className="eyebrow">{data.votingMode} mode</p>
           <h1>{data.title}</h1>
-          <p className="lede">Deadline: {new Date(data.deadline).toLocaleString()}</p>
+          <p className="lede">
+            {deadline ? `Deadline: ${deadline.toLocaleString()}` : 'No deadline set'}
+            {data.finalized && ' • Finalized'}
+          </p>
         </div>
       </header>
       <p>{data.description}</p>
@@ -46,10 +55,16 @@ export const BatchDetail = () => {
               </div>
               <div className="infraction-meta">
                 <p>Reported: {new Date(infraction.reportedDate).toLocaleDateString()}</p>
-                <p>Attachments: {infraction.attachments.length}</p>
-                <button type="button" className="vote-button">
-                  Vote now
-                </button>
+                {role === 'council' && canVote && (
+                  <Link to={`/batches/${id}/infractions/${infraction.id}`} className="vote-button">
+                    Vote now
+                  </Link>
+                )}
+                {(!canVote || role !== 'council') && (
+                  <Link to={`/batches/${id}/infractions/${infraction.id}`} className="view-button">
+                    View details
+                  </Link>
+                )}
               </div>
             </div>
           </li>

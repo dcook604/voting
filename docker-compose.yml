@@ -1,39 +1,47 @@
 version: '3.9'
+
 services:
   db:
     image: mariadb:10.11
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: voting
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-changeme}
+      MYSQL_DATABASE: ${DB_NAME:-voting}
+      MYSQL_USER: ${DB_USER:-voting}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
     volumes:
       - db-data:/var/lib/mysql
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${DB_ROOT_PASSWORD:-changeme}']
       interval: 10s
+      timeout: 5s
       retries: 5
-
-  minio:
-    image: minio/minio:RELEASE.2024-09-16T20-47-35Z
-    command: server /data --console-address ':9001'
-    environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio123
-    volumes:
-      - minio-data:/data
-    ports:
-      - '9000:9000'
-      - '9001:9001'
+    networks:
+      - voting-network
 
   backend:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile
-    env_file:
-      - apps/backend/.env.example
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: mysql://${DB_USER:-voting}:${DB_PASSWORD:-changeme}@db:3306/${DB_NAME:-voting}
+      JWT_SECRET: ${JWT_SECRET:-changeme}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-Strata Voting <noreply@example.com>}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:5173}
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - uploads-data:/app/uploads
+    networks:
+      - voting-network
     ports:
       - '4000:4000'
 
@@ -41,11 +49,20 @@ services:
     build:
       context: ./apps/frontend
       dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:4000/api/v1}
     depends_on:
       - backend
+    networks:
+      - voting-network
     ports:
       - '5173:80'
 
 volumes:
   db-data:
-  minio-data:
+  uploads-data:
+
+networks:
+  voting-network:
+    driver: bridge

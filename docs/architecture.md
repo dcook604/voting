@@ -6,7 +6,7 @@
 - **Storage**: MinIO service for attachments/evidence; backend signs download URLs based on requester permissions.
 - **Mail**: External Mailu SMTP configured via env; backend handles transactional emails.
 - **Reverse Proxy**: Deployment expects existing proxy (Coolify) or local `docker-compose` using nginx + certbot (later addition).
-- **Integrations**: Webhooks/REST clients for EspoCRM/ListMonk triggered on batch finalization.
+- **Integrations**: Outbound SMTP only (config via env vars). No EspoCRM integration.
 
 ## Key Flows
 1. **Magic-link auth**: Admin triggers invitation → backend emails signed token → frontend consumes token, exchanges for JWT, stores in httpOnly cookie.
