@@ -6,6 +6,7 @@ import { CreateBatch } from './pages/CreateBatch';
 import { Dashboard } from './pages/Dashboard';
 import { InfractionDetail } from './pages/InfractionDetail';
 import { Login } from './pages/Login';
+import { PublicResults } from './pages/PublicResults';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
     <Layout>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/results/:batchId" element={<PublicResults />} />
         <Route path="/" element={<Dashboard />} />
         <Route path="/batches/new" element={<CreateBatch />} />
         <Route path="/batches/:batchId" element={<BatchDetail />} />

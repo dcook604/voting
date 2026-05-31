@@ -112,6 +112,18 @@ export const apiClient = {
     }>(`/infractions/${infractionId}/results`);
   },
 
+  async getPublicResults(batchId: string) {
+    return fetchApi<{
+      batchId: string;
+      title: string;
+      finalized: boolean;
+      deadline: string | null;
+      isClosed: boolean;
+      closeReason: string | null;
+      results: { yes: number; no: number; abstain: number; cast: number; outcome: string | null };
+    }>(`/batches/${batchId}/public-results`);
+  },
+
   async getUserVotes(userId: string) {
     return fetchApi<Array<{ id: string; infractionId: string; voteValue: VoteValue }>>(
       `/users/${userId}/votes`

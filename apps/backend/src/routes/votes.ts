@@ -81,3 +81,51 @@ votesRouter.get('/users/:id/votes', async (req, res) => {
     data: Object.values(votes)
   });
 });
+
+votesRouter.get('/batches/:id/public-results', async (req, res) => {
+  const batch = await batchService.findById(req.params.id);
+
+  if (!batch) {
+    return res.status(404).json({ success: false, error: 'Batch not found' });
+  }
+
+  const infractions = await infractionService.findByBatchId(batch.id);
+  const totals = { yes: 0, no: 0, abstain: 0, cast: 0 };
+
+  for (const infraction of infractions) {
+    const results = await voteService.getResults(infraction.id);
+    totals.yes += results.summary.yes;
+    totals.no += results.summary.no;
+    totals.abstain += results.summary.abstain;
+    totals.cast += results.summary.total;
+  }
+
+  const isDeadlinePassed = batch.deadline && batch.deadline.getTime() < Date.now();
+  const isClosed = batch.finalized || !!isDeadlinePassed;
+  const closeReason = isClosed
+    ? isDeadlinePassed
+      ? 'Voting period ended'
+      : 'Finalized by administrator'
+    : null;
+
+  let outcome: string | null = null;
+  if (isClosed) {
+    if (totals.cast === 0) outcome = 'No votes cast';
+    else if (totals.yes > totals.no) outcome = 'Passed';
+    else if (totals.no > totals.yes) outcome = 'Failed';
+    else outcome = 'Tied';
+  }
+
+  res.json({
+    success: true,
+    data: {
+      batchId: batch.id,
+      title: batch.title,
+      finalized: batch.finalized,
+      deadline: batch.deadline,
+      isClosed,
+      closeReason,
+      results: { ...totals, outcome }
+    }
+  });
+});
